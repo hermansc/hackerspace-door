@@ -16,14 +16,18 @@ class Door:
 
     if self.state != gpio:
       # State has changed, create connection to API.
-      conn = httplib.HTTPConnection(API_HOST)
-
-      if gpio == 1:
-        conn.request('PUT', API_ENDPOINT)
-        print "Door closed"
-      else:
-        conn.request('POST', API_ENDPOINT)
-        print "Door open"
+      try:
+        conn = httplib.HTTPConnection(API_HOST)
+        if gpio == 1:
+          conn.request('PUT', API_ENDPOINT)
+          print "Door closed"
+        else:
+          conn.request('POST', API_ENDPOINT)
+          print "Door open"
+      except httplib.HTTPException as err:
+        # If we got a HTTP-exception, we just ignore it.
+        print "Got error: %s" % err
+        return
     self.state = gpio
 
 if __name__ == '__main__':
